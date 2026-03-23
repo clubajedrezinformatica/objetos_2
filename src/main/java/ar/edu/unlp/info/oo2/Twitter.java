@@ -21,4 +21,15 @@ public class Twitter {
         this.usuarios.add(nuevo);
         return nuevo;
     }
+
+    public void eliminarUsuario(String screenName){
+        Usuario aEliminar = this.usuarios.stream()
+            .filter(u -> u.getScreenName().equals(screenName))
+            .findFirst()
+            .orElse(null);
+        if (aEliminar != null) {
+            aEliminar.eliminarMisTweets();
+            this.usuarios.remove(aEliminar);
+        }
+    }
 }

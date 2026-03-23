@@ -10,19 +10,58 @@ public class TwitterTest {
 
     @BeforeEach
     void setUp() {
-        // Inicializamos el sistema antes de cada test
         sistema = new Twitter();
     }
 
     @Test
     void testAgregarUsuarioUnico() {
-        // Escenario: Agregamos un usuario por primera vez
         Usuario u1 = sistema.agregarUsuario("mauro_lp");
         assertNotNull(u1);
         assertEquals("mauro_lp", u1.getScreenName());
         
-        // Escenario: Intentamos agregar el mismo nombre
         Usuario u2 = sistema.agregarUsuario("mauro_lp");
         assertNull(u2, "No debería permitir duplicados");
+    }
+
+    @Test 
+    void testPostearTweetValido(){
+        Usuario u1 = sistema.agregarUsuario("user1");
+        Tweet t = u1.postearTweet("Tweet válido");
+        assertNotNull(t);
+        assertEquals("Tweet válido", t.getTexto());
+    }
+
+    @Test
+    void testPostearTweetInvalido() {
+        Usuario u1 = sistema.agregarUsuario("user1");
+        
+        // Caso 1: Texto vacío (falla el mínimo de 1 carác.)
+        assertThrows(IllegalArgumentException.class, () -> u1.postearTweet(""));
+        
+        // Caso 2: Texto demasiado largo (> 280)
+        String textoLargo = "a".repeat(281);
+        assertThrows(IllegalArgumentException.class, () -> u1.postearTweet(textoLargo));
+    }
+
+    @Test
+    void testRetweetPolimorfico() {
+        Usuario u1 = sistema.agregarUsuario("autor");
+        Tweet original = u1.postearTweet("Contenido original");
+        
+        Usuario u2 = sistema.agregarUsuario("replicador");
+        Tweet retweet = u2.postearRetweet(original);
+        
+        // El retweet debe devolver el texto del original por delegación
+        assertEquals("Contenido original", retweet.getTexto());
+    }
+
+    @Test
+    void testEliminarUsuario() {
+        sistema.agregarUsuario("user_a_borrar");
+        sistema.eliminarUsuario("user_a_borrar");
+        
+        // Al borrarlo, el screenName debería quedar disponible nuevamente
+        assertNotNull(sistema.agregarUsuario("user_a_borrar"), 
+            "El usuario no fue eliminado correctamente del sistema");
     }
 }
