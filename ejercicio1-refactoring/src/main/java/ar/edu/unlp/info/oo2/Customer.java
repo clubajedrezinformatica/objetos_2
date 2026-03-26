@@ -1,6 +1,5 @@
 package ar.edu.unlp.info.oo2;
 
-import java.util.List;
 import java.util.ArrayList;
 
 public class Customer {
@@ -19,48 +18,50 @@ public class Customer {
     }
 
     public String statement() {
-        double totalAmount = 0;
-        int frequentRenterPoints = 0;
         String result = "Rental Record for " + getName() + "\n";
 
         for (Rental each : rentals) {
-            double thisAmount = 0;
-
-            // Determinar montos para cada línea (El famoso Switch a refactorizar)
-            switch (each.getMovie().getPriceCode()) {
-                case Movie.REGULAR:
-                    thisAmount += 2;
-                    if (each.getDaysRented() > 2)
-                        thisAmount += (each.getDaysRented() - 2) * 1.5;
-                    break;
-                case Movie.NEW_RELEASE:
-                    thisAmount += each.getDaysRented() * 3;
-                    break;
-                case Movie.CHILDRENS:
-                    thisAmount += 1.5;
-                    if (each.getDaysRented() > 3)
-                        thisAmount += (each.getDaysRented() - 3) * 1.5;
-                    break;
-            }
-
-            // Añadir puntos de alquiler frecuente
-            frequentRenterPoints++;
-            // Bono por alquiler de un nuevo lanzamiento de más de un día
-            if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) && 
-                each.getDaysRented() > 1) {
-                frequentRenterPoints++;
-            }
-
             // Mostrar cifras para este alquiler
             result += "\t" + each.getMovie().getTitle() + "\t" + 
-                      String.valueOf(thisAmount) + "\n";
-            totalAmount += thisAmount;
+                      String.valueOf(each.getCharge()) + "\n";
         }
-
         // Añadir líneas de pie de página
-        result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
-        result += "You earned " + String.valueOf(frequentRenterPoints) + 
+        result += "Amount owed is " + String.valueOf(getTotalCharge()) + "\n";
+        result += "You earned " + String.valueOf(getTotalFrequentRenterPoints()) + 
                   " frequent renter points";
         return result;
     }
+
+    public String htmlStatement() {
+    String result = "<h1>Rental Record for <em>" + getName() + "</em></h1><p>\n";
+    
+    for (Rental each : rentals) {
+        // Reutilizamos la lógica de cálculo sin repetirla
+        result += each.getMovie().getTitle() + ": " + 
+                String.valueOf(each.getCharge()) + "<br>\n";
+    }
+    result += "</p><p>You owed <em>" + String.valueOf(getTotalCharge()) + "</em></p>\n";
+    result += "<p>On this rental you earned <em>" + 
+            String.valueOf(getTotalFrequentRenterPoints()) + 
+            "</em> frequent renter points</p>";
+    
+    return result;
+}
+
+    private double getTotalCharge() {
+        double result = 0;
+        for (Rental each: rentals) {
+            result += each.getCharge();
+        }
+        return result;
+    }
+
+    private int getTotalFrequentRenterPoints() {
+        int result = 0;
+        for (Rental each: rentals) {
+            result += each.getFrequentRenterPoints();
+        }
+        return result;
+    }
+
 }
