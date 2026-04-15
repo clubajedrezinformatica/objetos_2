@@ -16,4 +16,10 @@ public class Hotel {
     public double discountRate() {
         return this.discountRate;
     }
+
+    public double calculatePrice(TimePeriod timePeriod) {
+        return timePeriod.duration() * this.nightPrice() * this.discountRate();
+    }
 }
+
+
