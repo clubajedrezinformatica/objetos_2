@@ -1,3 +1,8 @@
 target/
 .vscode/
 *.class
+
+#Eclipse
+.classpath
+.project
+.settings/
