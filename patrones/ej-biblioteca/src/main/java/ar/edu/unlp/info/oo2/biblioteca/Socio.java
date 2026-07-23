@@ -6,9 +6,9 @@ public class Socio {
 	private String email;
 
 	public Socio(String nombre, String email, String legajo) {
-		this.nombre = nombre;
-		this.email = email;
-		this.legajo = legajo;
+		this.setNombre(nombre);
+		this.setEmail(email);
+		this.setLegajo(legajo);
 	}
 
 	public String getNombre() {
